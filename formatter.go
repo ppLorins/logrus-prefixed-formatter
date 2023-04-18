@@ -271,7 +271,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 	position := "no-frame-into"
 	if entry.HasCaller() {
 		c := entry.Caller
-		position = fmt.Sprintf("%s:%d %s", c.File, c.Line, c.Function)
+		position = fmt.Sprintf("%s:%d:%s|=> ", c.File, c.Line, c.Function)
 	}
 
 	if f.DisableTimestamp {
