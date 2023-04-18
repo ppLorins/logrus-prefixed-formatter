@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/mgutz/ansi"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -268,8 +268,14 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 		messageFormat = fmt.Sprintf("%%-%ds", f.SpacePadding)
 	}
 
+	position := "no-frame-into"
+	if entry.HasCaller() {
+		c := entry.Caller
+		position = fmt.Sprintf("%s:%d %s", c.File, c.Line, c.Function)
+	}
+
 	if f.DisableTimestamp {
-		fmt.Fprintf(b, "%s%s "+messageFormat, level, prefix, message)
+		fmt.Fprintf(b, "%s %s%s "+messageFormat, position, level, prefix, message)
 	} else {
 		var timestamp string
 		if !f.FullTimestamp {
@@ -277,7 +283,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 		} else {
 			timestamp = fmt.Sprintf("[%s]", entry.Time.Format(timestampFormat))
 		}
-		fmt.Fprintf(b, "%s %s%s "+messageFormat, colorScheme.TimestampColor(timestamp), level, prefix, message)
+		fmt.Fprintf(b, "%s %s %s%s "+messageFormat, colorScheme.TimestampColor(timestamp), position, level, prefix, message)
 	}
 	for _, k := range keys {
 		if k != "prefix" {
@@ -345,12 +351,12 @@ func (f *TextFormatter) appendValue(b *bytes.Buffer, value interface{}) {
 // This is to not silently overwrite `time`, `msg` and `level` fields when
 // dumping it. If this code wasn't there doing:
 //
-//  logrus.WithField("level", 1).Info("hello")
+//	logrus.WithField("level", 1).Info("hello")
 //
 // would just silently drop the user provided level. Instead with this code
 // it'll be logged as:
 //
-//  {"level": "info", "fields.level": 1, "msg": "hello", "time": "..."}
+//	{"level": "info", "fields.level": 1, "msg": "hello", "time": "..."}
 func prefixFieldClashes(data logrus.Fields) {
 	if t, ok := data["time"]; ok {
 		data["fields.time"] = t
