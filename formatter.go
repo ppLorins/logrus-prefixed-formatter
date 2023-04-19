@@ -275,7 +275,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 	}
 
 	if f.DisableTimestamp {
-		fmt.Fprintf(b, "%s %s%s ", level, position, prefix)
+		fmt.Fprintf(b, "%s %s%s", level, position, prefix)
 	} else {
 		var timestamp string
 		if !f.FullTimestamp {
@@ -283,7 +283,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 		} else {
 			timestamp = fmt.Sprintf("[%s]", entry.Time.Format(timestampFormat))
 		}
-		fmt.Fprintf(b, "%s %s %s%s ", colorScheme.TimestampColor(timestamp), level, position, prefix)
+		fmt.Fprintf(b, "%s%s %s%s", colorScheme.TimestampColor(timestamp), level, position, prefix)
 	}
 	for _, k := range keys {
 		if k != "prefix" {
