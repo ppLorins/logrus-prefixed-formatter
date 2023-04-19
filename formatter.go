@@ -275,7 +275,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 	}
 
 	if f.DisableTimestamp {
-		fmt.Fprintf(b, "%s %s%s "+messageFormat, level, position, prefix, message)
+		fmt.Fprintf(b, "%s %s%s ", level, position, prefix)
 	} else {
 		var timestamp string
 		if !f.FullTimestamp {
@@ -283,7 +283,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 		} else {
 			timestamp = fmt.Sprintf("[%s]", entry.Time.Format(timestampFormat))
 		}
-		fmt.Fprintf(b, "%s %s %s%s "+messageFormat, colorScheme.TimestampColor(timestamp), level, position, prefix, message)
+		fmt.Fprintf(b, "%s %s %s%s ", colorScheme.TimestampColor(timestamp), level, position, prefix)
 	}
 	for _, k := range keys {
 		if k != "prefix" {
@@ -291,6 +291,8 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 			fmt.Fprintf(b, " %s=%+v", levelColor(k), v)
 		}
 	}
+
+	fmt.Fprintf(b, messageFormat, message)
 }
 
 func (f *TextFormatter) needsQuoting(text string) bool {
