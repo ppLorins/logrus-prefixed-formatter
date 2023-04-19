@@ -292,7 +292,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *logrus.Entry, keys 
 		}
 	}
 
-	fmt.Fprintf(b, "=> "+messageFormat, message)
+	fmt.Fprintf(b, " => "+messageFormat, message)
 }
 
 func (f *TextFormatter) needsQuoting(text string) bool {
